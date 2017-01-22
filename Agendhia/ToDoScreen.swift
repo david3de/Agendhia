@@ -17,6 +17,9 @@ var ref: FIRDatabaseReference?
 class ToDoScreen: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     @IBOutlet weak var tableView: UITableView!
+    
+    @IBOutlet weak var detailLabel: UILabel!
+    
     var chosen : Task?
 
     //insert empty array list
@@ -33,6 +36,7 @@ class ToDoScreen: UIViewController, UITableViewDataSource, UITableViewDelegate {
         super.viewDidLoad()
         self.tableView.dataSource = self
         self.tableView.delegate = self
+        
         
         
         
@@ -58,31 +62,35 @@ class ToDoScreen: UIViewController, UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell()
-        cell.textLabel?.text = list[indexPath.row].name
-        
-        return cell
+        let reuseIdentifier = "cell"
+        var cell:UITableViewCell? = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier) as UITableViewCell?
+        if (cell == nil) {
+            cell = UITableViewCell(style: UITableViewCellStyle.subtitle, reuseIdentifier: reuseIdentifier)
+        }
+        cell!.textLabel?.text = list[indexPath.row].name
+        cell!.detailTextLabel?.text = list[indexPath.row].notes
+        return cell!
     }
     
     
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-        let complete = UITableViewRowAction(style: .normal, title: "Complete") { action, index in
+        let complete = UITableViewRowAction(style: .default, title: "\u{20DD}\n complete") { action, index in
             // set variables for rpg here
             list.remove(at:)(indexPath.row)
             self.completeTask()
             self.tableView.reloadData()
             print("Task Completed") }
-        complete.backgroundColor = UIColor.green
+        complete.backgroundColor = UIColor(red: 0.2372100629, green: 0.6997449806, blue: 0.2947102354, alpha: 1)
         
-        let delete = UITableViewRowAction(style: .normal, title: "Delete") {
+        let delete = UITableViewRowAction(style: .default, title: "\u{2715}\n remove") {
             _,_ in self.deleteTaskIndexPath = indexPath as IndexPath? as NSIndexPath?
             let taskToDelete = list[indexPath.row].name
             self.confirmDelete(list: taskToDelete)
         }
-        delete.backgroundColor = UIColor.red
+        delete.backgroundColor = UIColor(red: 0.93, green: 0.14, blue: 0.14, alpha: 1.0)
         
-        return [complete, delete]
+        return [delete, complete]
         
     }
     
