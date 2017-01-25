@@ -82,7 +82,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
         ref = FIRDatabase.database().reference().child("users").child(user).child("goldAmount")
         ref?.observe(.value, with: { snapshot in
+           if !snapshot.exists() {
+               return
+           } else { 
             goldAmount = snapshot.value as! Int
+           }
         })
         
         
